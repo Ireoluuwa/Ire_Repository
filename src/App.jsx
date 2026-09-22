@@ -19,6 +19,40 @@ import { JourneySection } from './JourneySection'
 
 const navItems = ['Work', 'About', 'Creative', 'Journey', 'Contact']
 
+const menuPreviews = {
+  Work: {
+    eyebrow: 'selected work',
+    title: 'Ideas, made useful.',
+    detail: 'AI food systems / student tools / playful experiments',
+    className: 'preview-work',
+  },
+  About: {
+    eyebrow: 'a little context',
+    title: 'Hi, that\'s me.',
+    detail: 'code + curiosity + a little crochet',
+    className: 'preview-about',
+    image: '/img_6988.png',
+  },
+  Creative: {
+    eyebrow: 'the visual side',
+    title: 'Make it feel like something.',
+    detail: 'UI / digital design / visual thinking',
+    className: 'preview-creative',
+  },
+  Journey: {
+    eyebrow: 'still becoming',
+    title: 'Learning in public.',
+    detail: 'technology, places, questions, onward',
+    className: 'preview-journey',
+  },
+  Contact: {
+    eyebrow: 'come say hello',
+    title: 'Let\'s make a thing.',
+    detail: 'available for thoughtful collaborations',
+    className: 'preview-contact',
+  },
+}
+
 const services = [
   {
     index: '01',
@@ -123,6 +157,7 @@ const personalityTraits = [
 function App() {
   const [cursorVariant, setCursorVariant] = useState('default')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [activeMenuItem, setActiveMenuItem] = useState('Work')
   const [scrollY, setScrollY] = useState(0)
   const [activeProject, setActiveProject] = useState(projects[0])
   const cursorRef = useRef(null)
@@ -143,6 +178,11 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    document.body.classList.toggle('menu-is-open', menuOpen)
+    return () => document.body.classList.remove('menu-is-open')
+  }, [menuOpen])
+
   const navState = useMemo(() => (scrollY > 28 ? 'compact' : 'top'), [scrollY])
 
   return (
@@ -155,21 +195,114 @@ function App() {
         {menuOpen && (
           <motion.div
             className="mobile-menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={{
+              open: { opacity: 1 },
+              closed: { opacity: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+            }}
           >
-            <div className="mobile-menu-header">
-              <LogoMark />
-              <button className="menu-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">
-                <X size={18} />
-              </button>
+            <motion.div
+              className="menu-wash"
+              variants={{ open: { scaleY: 1 }, closed: { scaleY: 0 } }}
+              transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
+            />
+            <div className="mobile-menu-inner">
+              <motion.div
+                className="mobile-menu-header"
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.45 }}
+              >
+                <a href="#top" onClick={() => setMenuOpen(false)} aria-label="Ire home"><LogoMark /></a>
+                <div className="menu-kicker">A small map of Ire</div>
+                <button className="menu-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+                  <span>CLOSE</span>
+                  <X size={18} />
+                </button>
+              </motion.div>
+
+              <div className="menu-layout">
+                <div className="menu-navigation-column">
+                  <motion.div
+                    className="menu-intro"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.45, duration: 0.5 }}
+                  >
+                    <span className="menu-label">Hello, I&apos;m Ire.</span>
+                    <p>Developer, creative, curious human.</p>
+                  </motion.div>
+                  <nav className="menu-navigation" aria-label="Full-screen navigation">
+                    {navItems.map((item, index) => (
+                      <motion.a
+                        key={item}
+                        href={`#${item.toLowerCase()}`}
+                        className={activeMenuItem === item ? 'active' : ''}
+                        onMouseEnter={() => setActiveMenuItem(item)}
+                        onFocus={() => setActiveMenuItem(item)}
+                        onClick={() => setMenuOpen(false)}
+                        initial={{ opacity: 0, x: -24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.48 + index * 0.07, duration: 0.45, ease: 'easeOut' }}
+                      >
+                        <span className="menu-number">0{index + 1}</span>
+                        <span className="menu-link-label">{item}</span>
+                        <span className="menu-link-action">Explore <ArrowUpRight size={17} /></span>
+                      </motion.a>
+                    ))}
+                  </nav>
+                </div>
+
+                <motion.div
+                  className="menu-story-column"
+                  initial={{ opacity: 0, y: 22 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.65, duration: 0.6, ease: 'easeOut' }}
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeMenuItem}
+                      className={`menu-preview ${menuPreviews[activeMenuItem].className}`}
+                      initial={{ opacity: 0, y: 14, rotate: 1.5 }}
+                      animate={{ opacity: 1, y: 0, rotate: 0 }}
+                      exit={{ opacity: 0, y: -12, rotate: -1.5 }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                    >
+                      {menuPreviews[activeMenuItem].image && (
+                        <img src={menuPreviews[activeMenuItem].image} alt="Ire beneath the Eiffel Tower at night" />
+                      )}
+                      <div className="preview-overlay" />
+                      <span className="preview-sticker">{activeMenuItem === 'About' ? "that's me :)" : 'in progress'}</span>
+                      <div className="preview-copy">
+                        <span>{menuPreviews[activeMenuItem].eyebrow}</span>
+                        <strong>{menuPreviews[activeMenuItem].title}</strong>
+                        <small>{menuPreviews[activeMenuItem].detail}</small>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                  <div className="menu-details">
+                    <div><span>Currently</span><strong>building + learning</strong></div>
+                    <div><span>Based in</span><strong>Nigeria</strong></div>
+                  </div>
+                </motion.div>
+              </div>
+
+              <motion.div
+                className="menu-footer"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.72, duration: 0.45 }}
+              >
+                <span className="menu-footer-note">Technology, creativity and curiosity in motion.</span>
+                <div className="menu-socials" aria-label="Social links">
+                  <a href="mailto:akandeoluwaire91@gmail.com">Email</a>
+                  <a href="https://github.com/Ireoluuwa" target="_blank" rel="noreferrer">GitHub</a>
+                  <a href="https://www.linkedin.com/in/iretomiwaakande" target="_blank" rel="noreferrer">LinkedIn</a>
+                </div>
+              </motion.div>
             </div>
-            <nav>
-              {navItems.map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenuOpen(false)}>{item}</a>
-              ))}
-            </nav>
           </motion.div>
         )}
       </AnimatePresence>
@@ -208,21 +341,26 @@ function App() {
           <div className="hero-grid">
             <div className="hero-copy">
               <motion.div
+                className="hero-portrait"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, ease: 'easeOut' }}
               >
-                <LogoMark className="hero-logo" />
+                <img className="hero-portrait-image" src="/mee.png" alt="Ireoluwatomiwa Akande smiling in front of a living wall and AWS display" />
+                <div className="hero-portrait-shade" aria-hidden="true" />
+                <span className="hero-hand-note">hi, that&apos;s me :)</span>
+                <div className="hero-content">
+                  <span className="hero-greeting">Hi, I&apos;m Ire.</span>
+                  <h1>Code, curiosity, and things worth making.</h1>
+                  <div className="hero-actions">
+                    <a href="#work" className="primary-link">
+                      View work
+                      <ArrowUpRight size={16} />
+                    </a>
+                    <a href="#contact" className="secondary-link">Let&apos;s talk</a>
+                  </div>
+                </div>
               </motion.div>
-            </div>
-            <div className="hero-strap">
-              <div className="hero-actions">
-                <a href="#work" className="primary-link">
-                  View work
-                  <ArrowUpRight size={16} />
-                </a>
-                <a href="#contact" className="secondary-link">Let’s talk</a>
-              </div>
             </div>
           </div>
           <div className="scroll-note">Scroll to explore</div>
