@@ -449,7 +449,7 @@ function App() {
             Both situations have somehow worked out so far.
                 <br />
                 <br />
-            So this is me — curious, creative, slightly chaotic, always making something, and figuring things out as I go.              </p>
+            So this is me curious, creative, slightly chaotic, always making something, and figuring things out as I go.              </p>
               <div className="about-thread-list" aria-label="Things that make Ire">
                 <span>code</span>
                 <span>design</span>
