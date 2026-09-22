@@ -16,6 +16,10 @@ import {
 import { LogoMark } from './Logo'
 import { ExperienceSection } from './ExperienceSection'
 import { JourneySection } from './JourneySection'
+import { WhatIDoCard, WhatIDoPage } from './WhatIDoPage'
+import { whatIDoAreas } from './whatIDoData'
+import { ProjectCard, ProjectCaseStudy } from './ProjectCaseStudy'
+import { featuredProjects } from './projectsData'
 
 const navItems = ['Work', 'About', 'Creative', 'Journey', 'Contact']
 
@@ -53,76 +57,6 @@ const menuPreviews = {
   },
 }
 
-const services = [
-  {
-    index: '01',
-    title: 'Software',
-    description: 'Web applications, frontend development, backend systems and APIs.',
-    accent: 'studio',
-  },
-  {
-    index: '02',
-    title: 'AI',
-    description: 'Machine learning, AI experimentation, forecasting and intelligent systems.',
-    accent: 'amber',
-  },
-  {
-    index: '03',
-    title: 'Creative',
-    description: 'UI design, branding, visual content, websites and digital experiences.',
-    accent: 'sand',
-  },
-  {
-    index: '04',
-    title: 'Building',
-    description: 'Turning ideas into real products, experiments and projects.',
-    accent: 'charcoal',
-  },
-]
-
-const projects = [
-  {
-    slug: 'feedsmart',
-    title: 'FeedSmart',
-    type: 'AI food systems',
-    summary: 'AI-based food management system focused on reducing food waste and optimizing food distribution.',
-    detail: 'The project explores demand forecasting to estimate meal demand and help determine appropriate food preparation quantities.',
-    tech: ['Python', 'Forecasting', 'Data modelling'],
-    accent: 'sand',
-    size: 'large',
-  },
-  {
-    slug: 'edumanage',
-    title: 'EduManage',
-    type: 'Student system',
-    summary: 'A student management platform involving records, attendance, academics, payments and scheduling.',
-    detail: 'Built for streamlined administration, authentication and academic operations across an education workflow.',
-    tech: ['Auth', 'Admin flows', 'Automation'],
-    accent: 'charcoal',
-    size: 'medium',
-  },
-  {
-    slug: 'ayo-game',
-    title: 'Ayo Game',
-    type: 'Python game',
-    summary: 'A Python implementation of the traditional Ayo game.',
-    detail: 'A strategic, interactive board game experience built to explore logic, game systems and playful interfaces.',
-    tech: ['Python', 'Game logic', 'UX'],
-    accent: 'amber',
-    size: 'small',
-  },
-  {
-    slug: 'uwaci',
-    title: 'UWACI',
-    type: 'Backend engineering',
-    summary: 'Privacy-first multilingual AI platform built with robust backend engineering foundations.',
-    detail: 'Relevant technologies include Python, FastAPI, PostgreSQL, SQLAlchemy, Pydantic, async APIs and automated testing.',
-    tech: ['FastAPI', 'PostgreSQL', 'Async APIs'],
-    accent: 'neutral',
-    size: 'medium',
-  },
-]
-
 const exploration = ['JavaScript', 'React', 'Backend Engineering', 'Python', 'C', 'Linux', 'AI / Machine Learning', 'UI / Digital Design']
 
 const explorationLinks = {
@@ -154,12 +88,26 @@ const personalityTraits = [
   'Resourceful',
 ]
 
+const serviceRouteIds = new Set(whatIDoAreas.map((area) => area.id))
+const projectRouteIds = new Set(featuredProjects.map((project) => `project-${project.id}`))
+
+function getServiceRoute() {
+  const route = window.location.hash.slice(1)
+  return serviceRouteIds.has(route) ? route : null
+}
+
+function getProjectRoute() {
+  const route = window.location.hash.slice(1)
+  return projectRouteIds.has(route) ? route.replace('project-', '') : null
+}
+
 function App() {
   const [cursorVariant, setCursorVariant] = useState('default')
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeMenuItem, setActiveMenuItem] = useState('Work')
   const [scrollY, setScrollY] = useState(0)
-  const [activeProject, setActiveProject] = useState(projects[0])
+  const [serviceRoute, setServiceRoute] = useState(getServiceRoute)
+  const [projectRoute, setProjectRoute] = useState(getProjectRoute)
   const cursorRef = useRef(null)
 
   useEffect(() => {
@@ -169,12 +117,19 @@ function App() {
     }
 
     const handleScroll = () => setScrollY(window.scrollY)
+    const handleHashChange = () => {
+      setServiceRoute(getServiceRoute())
+      setProjectRoute(getProjectRoute())
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
     window.addEventListener('pointermove', handleMove)
     window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('hashchange', handleHashChange)
 
     return () => {
       window.removeEventListener('pointermove', handleMove)
       window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('hashchange', handleHashChange)
     }
   }, [])
 
@@ -184,6 +139,13 @@ function App() {
   }, [menuOpen])
 
   const navState = useMemo(() => (scrollY > 28 ? 'compact' : 'top'), [scrollY])
+  const activeService = whatIDoAreas.find((area) => area.id === serviceRoute)
+  const activeServiceIndex = activeService ? whatIDoAreas.indexOf(activeService) : -1
+  const activeProjectPage = featuredProjects.find((project) => project.id === projectRoute)
+  const activeProjectIndex = activeProjectPage ? featuredProjects.indexOf(activeProjectPage) : -1
+  const navigateTo = (target) => {
+    window.location.hash = target
+  }
 
   return (
     <div className="page-shell">
@@ -325,7 +287,21 @@ function App() {
         </div>
       </header>
 
-      <main id="top">
+      {activeProjectPage ? (
+        <ProjectCaseStudy
+          project={activeProjectPage}
+          previous={featuredProjects[(activeProjectIndex + featuredProjects.length - 1) % featuredProjects.length]}
+          next={featuredProjects[(activeProjectIndex + 1) % featuredProjects.length]}
+          onNavigate={navigateTo}
+        />
+      ) : activeService ? (
+        <WhatIDoPage
+          area={activeService}
+          previous={whatIDoAreas[(activeServiceIndex + whatIDoAreas.length - 1) % whatIDoAreas.length]}
+          next={whatIDoAreas[(activeServiceIndex + 1) % whatIDoAreas.length]}
+          onNavigate={navigateTo}
+        />
+      ) : <main id="top">
         <section className="hero section-shell">
           <motion.div className="hero-ambient" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }} />
           <div className="eyebrow-row">
@@ -383,27 +359,11 @@ function App() {
         <section className="services section-shell" id="work">
           <div className="section-head">
             <div className="section-label">What I do</div>
-            <h2>Strategic thinking, creative execution, real product building.</h2>
+            <h2>Things I like making.</h2>
           </div>
-          <div className="service-list">
-            {services.map((item) => (
-              <motion.article
-                key={item.title}
-                className={`service-card ${item.accent}`}
-                whileHover={{ y: -8 }}
-                onHoverStart={() => setCursorVariant('project')}
-                onHoverEnd={() => setCursorVariant('default')}
-              >
-                <div className="service-index">{item.index}</div>
-                <div className="service-body">
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                </div>
-                <div className="service-arrow">
-                  <ArrowRight size={18} />
-                </div>
-              </motion.article>
-            ))}
+          <div className="what-intro">Four doors into different sides of me.</div>
+          <div className="what-grid">
+            {whatIDoAreas.map((area) => <WhatIDoCard key={area.id} area={area} onOpen={navigateTo} onHover={setCursorVariant} onLeave={() => setCursorVariant('default')} />)}
           </div>
         </section>
 
@@ -418,31 +378,14 @@ function App() {
 
           <div className="project-showcase">
             <div className="project-list">
-              {projects.map((project) => (
-                <button
-                  key={project.slug}
-                  type="button"
-                  className={`project-item ${project.size} ${activeProject.slug === project.slug ? 'active' : ''}`}
-                  onMouseEnter={() => {
-                    setActiveProject(project)
-                    setCursorVariant('project')
-                  }}
-                  onMouseLeave={() => setCursorVariant('default')}
-                  onFocus={() => setActiveProject(project)}
-                >
-                  <div className={`project-visual gradient-${project.accent}`}>
-                    <span>{project.title}</span>
-                  </div>
-                  <div className="project-content">
-                    <div className="project-meta">
-                      <span>{project.type}</span>
-                      <span>{project.tech[0]}</span>
-                    </div>
-                    <h3>{project.title}</h3>
-                    <p>{project.summary}</p>
-                    <div className="project-link">View case study <ArrowUpRight size={16} /></div>
-                  </div>
-                </button>
+              {featuredProjects.filter((project) => project.featured).map((project, index) => (
+                <ProjectCard
+                  key={project.id}
+                  project={{ ...project, size: index === 0 ? 'large' : index === 1 ? 'medium' : 'small' }}
+                  onOpen={(id) => navigateTo(`project-${id}`)}
+                  onHover={setCursorVariant}
+                  onLeave={() => setCursorVariant('default')}
+                />
               ))}
             </div>
           </div>
@@ -547,7 +490,7 @@ function App() {
             <a href="https://www.instagram.com/iree_oluwaa?stkn=MTRvZnJqYjkwaXBvOQ%3D%3D&utm_source=qr" target="_blank" rel="noreferrer"><Instagram size={18} /> Instagram / iree_oluwaa</a>
           </div>
         </section>
-      </main>
+      </main>}
 
       <footer className="site-footer">
         <span>IRE</span>
