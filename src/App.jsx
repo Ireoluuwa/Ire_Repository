@@ -4,6 +4,7 @@ import {
   ArrowUpRight,
   ArrowRight,
   ChevronRight,
+  Download,
   Github,
   Instagram,
   Linkedin,
@@ -20,6 +21,7 @@ import { WhatIDoCard, WhatIDoPage } from './WhatIDoPage'
 import { whatIDoAreas } from './whatIDoData'
 import { ProjectCard, ProjectCaseStudy } from './ProjectCaseStudy'
 import { featuredProjects } from './projectsData'
+import cvFile from './Resume_Iretomiwa_Akande_AI_ML_Engineer_2026-09 (1).pdf'
 
 const navItems = ['Work', 'About', 'Creative', 'Journey', 'Contact']
 
@@ -75,7 +77,6 @@ const personalityTraits = [
   'Decisive',
   'Productive',
   'Confident',
-  'Leadership-oriented',
   'Warm',
   'Friendly',
   'Enthusiastic',
@@ -334,6 +335,10 @@ function App() {
                       <ArrowUpRight size={16} />
                     </a>
                     <a href="#contact" className="secondary-link">Let&apos;s talk</a>
+                    <a className="cv-link" href={cvFile} download="Iretomiwa_Akande_CV.pdf">
+                      Download CV
+                      <Download size={15} />
+                    </a>
                   </div>
                 </div>
               </motion.div>
@@ -420,11 +425,31 @@ function App() {
             >
               <p className="about-opening">Hi, I’m Ire. I’m a Computer Science girl with a slightly unreasonable number of tabs open in my head.</p>
               <p>
-                I build software, explore AI, work with backend systems and make websites do useful things. I have also worked with digital media, ICT support and real businesses, which means I’m just as interested in how technology meets people as I am in how it runs behind the scenes.
-              </p>
-              <p>
-                I like design, branding, crochet and crafting too. Basically, if I get curious about something, there is a decent chance I will try to make it. Sometimes that means a project; sometimes it means learning why one stubborn line of code refuses to behave.
-              </p>
+            There are probably more accurate ways to describe me, but “girl who has 17 interests at once” feels pretty close.
+                <br />
+                <br />
+                I like crochet. I like crafting. I like pretty designs. I like trying things I've never done before. I like laughing until my stomach hurts. I like good conversations. And yes, I also happen to enjoy sitting in front of a laptop fighting with code.
+                <br />
+                <br />
+                I like making things that are useful, beautiful, and a little bit fun. I like learning new things. I like figuring out how to make something work. I like building things that make life a little easier for someone else.
+                <br />
+                <br />
+                I’m curious about almost everything, which is both a blessing and a very efficient way to give myself too many things to do.
+                <br />
+                <br />
+                I’ll say “let me just try something” and suddenly I'm three hours deep into it.
+                <br />
+                <br />
+            Sometimes I know exactly what I’m doing.
+                <br />
+                <br />
+            Sometimes I absolutely do not.
+                <br />
+                <br />
+            Both situations have somehow worked out so far.
+                <br />
+                <br />
+            So this is me — curious, creative, slightly chaotic, always making something, and figuring things out as I go.              </p>
               <div className="about-thread-list" aria-label="Things that make Ire">
                 <span>code</span>
                 <span>design</span>

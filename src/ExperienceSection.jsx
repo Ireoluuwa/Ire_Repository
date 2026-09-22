@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, X } from 'lucide-react'
-import { leadershipExperience, professionalExperience } from './experienceData'
+import { professionalExperience } from './experienceData'
 
 function ExperienceDetail({ item }) {
   return (
@@ -74,7 +74,7 @@ function ExperienceList({ items, activeId, onSelect }) {
 }
 
 function ExperienceReader({ item, index, onClose, onSelect }) {
-  const allExperience = [...professionalExperience, ...leadershipExperience]
+  const allExperience = professionalExperience
   const previous = allExperience[index - 1]
   const next = allExperience[index + 1]
 
@@ -151,7 +151,7 @@ function ExperienceReader({ item, index, onClose, onSelect }) {
 }
 
 export function ExperienceSection() {
-  const allExperience = [...professionalExperience, ...leadershipExperience]
+  const allExperience = professionalExperience
   const [activeItem, setActiveItem] = useState(null)
   const [selectedItem, setSelectedItem] = useState(null)
   const activeId = selectedItem?.id ?? null
@@ -170,7 +170,7 @@ export function ExperienceSection() {
           <div className="section-label">Experience</div>
           <h2>Where curiosity became practice.</h2>
         </div>
-        <p>Professional work, project ownership, teaching and leadership, collected in one living archive.</p>
+        <p>Professional work and software practice, collected in one living archive.</p>
       </div>
 
       <div className="experience-archive">
@@ -189,7 +189,7 @@ export function ExperienceSection() {
             </AnimatePresence>
             <div className="experience-feature-shade" />
             <div className="experience-feature-meta">
-              <span>{selectedItem ? `${previewItem.number} / 07` : '07 experiences'}</span>
+              <span>{selectedItem ? `${previewItem.number} / 04` : '04 experiences'}</span>
               <span>{selectedItem ? previewItem.category : 'Select a chapter'}</span>
             </div>
             <div className="experience-feature-label">
@@ -207,14 +207,6 @@ export function ExperienceSection() {
             <ExperienceList items={professionalExperience} activeId={activeId} onSelect={openExperience} />
           </div>
         </div>
-      </div>
-
-      <div className="experience-subsection">
-        <div className="experience-subsection-heading">
-          <div className="section-label">Leadership & Community</div>
-          <p>Experience that happens with people, not only systems.</p>
-        </div>
-        <ExperienceList items={leadershipExperience} activeId={activeId} onSelect={openExperience} />
       </div>
 
       <AnimatePresence>
